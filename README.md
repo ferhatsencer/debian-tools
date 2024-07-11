@@ -24,6 +24,7 @@ Make sure the main script is executable:
 
 bash
 chmod +x tools.sh
+chmod +x scripts/*.sh
 
 
 ## Usage
