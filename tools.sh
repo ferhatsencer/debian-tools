@@ -37,8 +37,8 @@ while true; do
     echo "7.  Setup Docker"
     echo "8.  Configure Resolved"
     echo "9.  Install Brave Browser"
-    echo "10. Install Eddie UI"
-    echo "11. Install Mullvad VPN"
+    echo "10. Install AirVPN Eddie UI"
+    echo "11. Install Mullvad"
     echo "12. Install Signal"
     echo "13. Install Flatpak Packages"
     echo "14. Install JetBrains Toolbox"
@@ -46,6 +46,7 @@ while true; do
     echo "16. Install QEMU/KVM"
     echo "17. Install Waterfox"
     echo "18. Install Deb Packages"
+    echo "19. Install IVPN"
     echo "0.  Exit"
 
     read -p "Enter your choice: " choice
@@ -60,7 +61,7 @@ while true; do
         7) run_script "docker.sh" ;;
         8) run_script "resolved.sh" ;;
         9) run_script "brave-browser.sh" ;;
-        10) run_script "eddie-ui.sh" ;;
+        10) run_script "airvpn-eddie-ui.sh" ;;
         11) run_script "mullvad.sh" ;;
         12) run_script "signal.sh" ;;
         13) run_script "flatpak_packages.sh" ;;
@@ -69,6 +70,7 @@ while true; do
         16) run_script "qemu_kvm.sh" ;;
         17) run_script "waterfox.sh" ;;
         18) run_script "deb_packages.sh" ;;
+        19) run_script "ivpn.sh" ;;
         0) exit 0 ;;
         *) echo "Invalid option. Press any key to continue..."; read -n 1 ;;
     esac

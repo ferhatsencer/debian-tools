@@ -24,6 +24,7 @@ fi
 # fi
 
 # Install necessary C++ development packages
+# libstdc++-dev is a virtual package you should explicitly select one to install
 if ! sudo apt install build-essential \
     cmake \
     gdb \
@@ -41,6 +42,7 @@ if ! sudo apt install build-essential \
     libjsoncpp-dev \
     libcurl4-openssl-dev \
     libgtest-dev \
+    libstdc++-12-dev \
     ccache; then
     exit_with_error "Failed to install necessary C++ development packages"
 fi

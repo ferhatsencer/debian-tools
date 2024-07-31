@@ -1,62 +1,151 @@
 #!/usr/bin/env bash
 
+# Usage:
+#   ./docker-install.sh         Install Docker
+#   ./docker-install.sh -u      Uninstall Docker
+
 # Function to display error and exit
 exit_with_error() {
     echo "Error: $1"
     exit 1
 }
 
-# Check if Docker is already installed
-if command -v docker &>/dev/null; then
-    echo "Docker is already installed."
-    read -p "Do you want to reinstall Docker? [y/N]: " reinstall
-    if [[ "$reinstall" != [yY] ]]; then
+# Check if -u parameter is provided
+if [ $1 = "-u" ]; then
+    # Uninstall Docker
+    echo "Uninstalling Docker..."
+
+    # Check if Docker is installed
+    if ! dpkg -l | grep -q "docker-ce"; then
+        echo "Docker is not installed."
         exit 0
     fi
-fi
 
-# Install prerequisites
-echo "Installing required packages..."
-if ! sudo apt update; then
-    exit_with_error "Failed to update package lists"
-fi
-if ! sudo apt install apt-transport-https ca-certificates curl gnupg lsb-release; then
-    exit_with_error "Failed to install required packages"
-fi
+    # Prompt user for confirmation
+    read -p "Do you want to uninstall Docker? [y/N]: " proceed
+    if [[ "$proceed" != [yY] ]]; then
+        echo "Uninstallation aborted by the user."
+        exit 0
+    fi
 
-# Add Docker's official GPG key
-echo "Adding Docker's official GPG key..."
-if ! sudo curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg; then
-    exit_with_error "Failed to add Docker's GPG key"
-fi
+    # Stop Docker service
+    echo "Stopping Docker service..."
+    if ! sudo systemctl stop docker; then
+        exit_with_error "Failed to stop Docker service"
+    fi
 
-# Set up the stable repository
-echo "Setting up the Docker stable repository..."
-echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-if ! sudo apt update; then
-    exit_with_error "Failed to update package lists after adding Docker repository"
-fi
+    # Remove Docker packages
+    echo "Removing Docker packages..."
+    if ! sudo apt purge docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && sudo apt purge docker-ce*; then
+        exit_with_error "Failed to remove Docker packages"
+    fi
 
-# Install Docker Engine
-echo "Installing Docker Engine..."
-if ! sudo apt install docker-ce docker-ce-cli containerd.io; then
-    exit_with_error "Failed to install Docker"
-fi
+    # Remove Docker repository
+    echo "Removing Docker repository..."
+    if ! sudo rm /etc/apt/sources.list.d/docker.list; then
+        exit_with_error "Failed to remove Docker repository"
+    fi
 
-# Enable and start Docker service
-echo "Enabling and starting Docker service..."
-if ! sudo systemctl enable docker; then
-    exit_with_error "Failed to enable Docker service"
-fi
-if ! sudo systemctl start docker; then
-    exit_with_error "Failed to start Docker service"
-fi
+    # Remove Docker's GPG key
+    echo "Removing Docker's GPG key..."
+    if ! sudo rm /etc/apt/keyrings/docker.asc; then
+        exit_with_error "Failed to remove Docker's GPG key"
+    fi
 
-# Check Docker installation by running a test image
-echo "Verifying Docker installation by running a test image..."
-if ! docker run --rm hello-world; then
-    exit_with_error "Docker installation verification failed"
-fi
+    # Update APT repo info
+    echo "Updating APT repo info..."
+    if ! sudo apt update; then
+        exit_with_error "Failed to update APT repo info"
+    fi
 
-echo "Docker and Portainer installed successfully. Access Portainer at http://localhost:9000"
-exit 0
+    # Remove Docker group
+    echo "Removing Docker group..."
+    if ! sudo groupdel docker; then
+        exit_with_error "Failed to remove Docker group"
+    fi
+
+    echo "Docker uninstalled successfully."
+else
+    # Install Docker
+    echo "Installing Docker..."
+
+    # Check if Docker is installed
+    if dpkg -l | grep -q "docker-ce"; then
+        echo "Docker is already installed."
+        exit 0
+    fi
+
+    # Prompt user for confirmation
+    read -p "Do you want to install Docker? [y/N]: " proceed
+    if [[ "$proceed" != [yY] ]]; then
+        echo "Installation aborted by the user."
+        exit 0
+    fi
+
+    # Check if Docker repository is already added
+    if [ -f "/etc/apt/sources.list.d/docker.list" ]; then
+        echo "Docker repository is already added."
+    else
+        # Update APT repo info
+        echo "Updating APT repo info..."
+        if ! sudo apt update; then
+            exit_with_error "Failed to update APT repo info"
+        fi
+
+        # Install prerequisites
+        echo "Installing prerequisites..."
+        if ! sudo apt install ca-certificates curl; then
+            exit_with_error "Failed to install prerequisites"
+        fi
+
+        # Create directory for Docker's GPG key
+        echo "Creating directory for Docker's GPG key..."
+        if ! sudo install -m 0755 -d /etc/apt/keyrings; then
+            exit_with_error "Failed to create directory for Docker's GPG key"
+        fi
+
+        # Add Docker's official GPG key
+        echo "Adding Docker's official GPG key..."
+        if ! sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc; then
+            exit_with_error "Failed to add Docker's official GPG key"
+        fi
+
+        # Set permissions for Docker's GPG key
+        echo "Setting permissions for Docker's GPG key..."
+        if ! sudo chmod a+r /etc/apt/keyrings/docker.asc; then
+            exit_with_error "Failed to set permissions for Docker's GPG key"
+        fi
+
+        # Add Docker repository
+        echo "Adding Docker repository..."
+        if ! echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null; then
+            exit_with_error "Failed to add Docker repository"
+        fi
+
+        # Update APT repo info
+        echo "Updating APT repo info..."
+        if ! sudo apt update; then
+            exit_with_error "Failed to update APT repo info"
+        fi
+    fi
+
+    # Install Docker
+    echo "Installing Docker..."
+    if ! sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin; then
+        exit_with_error "Failed to install Docker"
+    fi
+
+    # Create Docker group
+    echo "Creating Docker group..."
+    if ! sudo groupadd docker; then
+        exit_with_error "Failed to create Docker group"
+    fi
+
+    # Add user to Docker group
+    echo "Adding user to Docker group..."
+    if ! sudo usermod -aG docker $USER; then
+        exit_with_error "Failed to add user to Docker group"
+    fi
+
+    echo "Docker installed successfully. Please log out and log back in to use Docker."
+fi

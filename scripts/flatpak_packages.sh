@@ -55,8 +55,6 @@ flatpak_apps=(
     "org.kde.marknote"
     "org.kde.plasmatube"
     "org.kde.audiotube"
-    "com.github.unrud.VideoDownloader"
-    "com.warlordsoftwares.youtube-downloader-4ktube"
     "io.github.alainm23.planify"
     "io.github.giantpinkrobots.bootqt"
 )

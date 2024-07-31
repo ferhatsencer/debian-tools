@@ -146,7 +146,10 @@ system_tools_packages=(
     python3-pip
     udftools
     mlocate
+    #exfat fuse packages
     libfuse*
+    #ntfs packages
+    ntfs*
 )
 
 # Function to handle errors
