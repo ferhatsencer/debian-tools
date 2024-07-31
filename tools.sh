@@ -47,6 +47,7 @@ while true; do
     echo "17. Install Waterfox"
     echo "18. Install Deb Packages"
     echo "19. Install IVPN"
+    echo "20. Install UnityHub"
     echo "0.  Exit"
 
     read -p "Enter your choice: " choice
@@ -71,6 +72,7 @@ while true; do
         17) run_script "waterfox.sh" ;;
         18) run_script "deb_packages.sh" ;;
         19) run_script "ivpn.sh" ;;
+        19) run_script "unityhub.sh" ;;
         0) exit 0 ;;
         *) echo "Invalid option. Press any key to continue..."; read -n 1 ;;
     esac
