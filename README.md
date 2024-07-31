@@ -56,43 +56,47 @@ This will present a menu of available tools. Select the number corresponding to 
 15. **resolved.sh**: Configure systemd-resolved
 16. **signal.sh**: Install Signal messenger
 17. **waterfox.sh**: Install Waterfox browser
-18. **waydroid.sh**: Set up Waydroid
+18. **waydroid.sh**: Install up Waydroid
+19. **ivpn.sh**: Install up IVpn
+20. **unityhub.sh**: Install up Unityhub
 
 ## Project Structure
 
-debian-tools/
-│
-├── tools.sh              # Main script to run all tools
-├── README.md             # This file
-├── LICENSE               # License file
-├── .gitignore            # Git ignore file
-│
-├── scripts/              # Directory containing all tool scripts
-│   ├── add_to_sudoers.sh
-│   ├── amdgpu.sh
-│   ├── brave-browser.sh
-│   ├── deb_packages.sh
-│   ├── default_packages.sh
-│   ├── docker.sh
-│   ├── eddie-ui.sh
-│   ├── flatpak_packages.sh
-│   ├── jetbrains-toolbox.sh
-│   ├── librewolf.sh
-│   ├── mullvad.sh
-│   ├── protonvpn-gui.sh
-│   ├── qemu_kvm.sh
-│   ├── qt-qml-cpp.sh
-│   ├── resolved.sh
-│   ├── signal.sh
-│   ├── waterfox.sh
-│   └── waydroid.sh
-│
-├── deb_downloads/        # Directory for temporary .deb downloads
-│   └── .gitkeep
-│
-└── logs/                 # Directory for log files
-└── .gitkeep
+This repository is organized as follows:
 
+- **debian-tools/**: Root directory.
+  - **tools.sh**: Main script to run all tools.
+  - **README.md**: Documentation for the project.
+  - **LICENSE**: License file.
+  - **.gitignore**: Specifies intentionally untracked files to ignore.
+
+- **scripts/**: Contains all tool scripts.
+  - **add_to_sudoers.sh**: Script to add users to sudoers.
+  - **amdgpu.sh**: AMD GPU installation and configuration script.
+  - **brave-browser.sh**: Script to install Brave browser.
+  - **deb_packages.sh**: Script for installing .deb packages.
+  - **default_packages.sh**: Script for installing default packages.
+  - **docker.sh**: Docker installation and configuration script.
+  - **eddie-ui.sh**: Installation script for Eddie UI.
+  - **flatpak_packages.sh**: Script for installing Flatpak packages.
+  - **jetbrains-toolbox.sh**: Script to install JetBrains Toolbox.
+  - **librewolf.sh**: Script to install LibreWolf browser.
+  - **mullvad.sh**: Mullvad VPN installation script.
+  - **protonvpn-gui.sh**: ProtonVPN GUI installation script.
+  - **qemu_kvm.sh**: QEMU and KVM installation script.
+  - **qt-qml-cpp.sh**: Setup script for Qt, QML, and C++.
+  - **resolved.sh**: Systemd-resolved configuration script.
+  - **signal.sh**: Signal messenger installation script.
+  - **waterfox.sh**: Waterfox browser installation script.
+  - **waydroid.sh**: Waydroid installation and setup script.
+  - **IVpn.sh**: IVpn installation and setup script.
+  - **unityhub.sh**: unityhub installation and setup script.
+
+- **deb_downloads/**: Directory for temporary .deb file downloads.
+  - **.gitkeep**: File to keep the directory in version control.
+
+- **logs/**: Directory for storing log files.
+  - **.gitkeep**: File to keep the directory in version control.
 
 ## Contributing
 
